@@ -1,0 +1,121 @@
+﻿/* Unlayered on purpose: these rules win over Tailwind/shadcn utilities. */
+:root {
+  --void: #07060f;
+  --panel: #110e24;
+  --panel-2: #1c1740;
+  --line: #2c2557;
+  --ink: #edebff;
+  --muted: #a39dd0;
+  --magenta: #ff2e88;
+  --cyan: #19f0ff;
+}
+
+html { background: var(--void); color-scheme: dark; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  background:
+    linear-gradient(rgba(25, 240, 255, 0.05) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgba(25, 240, 255, 0.05) 1px, transparent 1px) 0 0 / 32px 32px,
+    radial-gradient(60% 45% at 85% 0%, rgba(255, 46, 136, 0.2), transparent 70%),
+    var(--void);
+}
+
+.font-pixel { font-family: var(--font-pixel), monospace; letter-spacing: 0.02em; }
+
+/* stepped "pixel" border: four offset shadows, no rounded corners */
+.px-box {
+  --edge: var(--line);
+  background: var(--panel);
+  box-shadow:
+    -4px 0 0 0 var(--edge), 4px 0 0 0 var(--edge),
+    0 -4px 0 0 var(--edge), 0 4px 0 0 var(--edge),
+    0 0 28px -6px var(--edge);
+}
+
+.scan::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 4px);
+}
+
+.neon-btn {
+  border-radius: 0;
+  background: var(--magenta);
+  color: var(--void);
+  font-family: var(--font-pixel), monospace;
+  font-weight: 700;
+  height: auto;
+  padding: 0.9rem 1.4rem;
+  box-shadow: 4px 4px 0 0 #7d1243;
+  transition: transform 80ms steps(2), box-shadow 80ms steps(2);
+}
+.neon-btn:hover { background: #ff5aa0; transform: translate(2px, 2px); box-shadow: 2px 2px 0 0 #7d1243; }
+.neon-btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+.neon-btn:disabled { background: var(--panel-2); color: var(--muted); box-shadow: 4px 4px 0 0 var(--line); opacity: 1; }
+.neon-btn-on { background: var(--panel-2); color: var(--cyan); box-shadow: 4px 4px 0 0 var(--cyan); }
+.neon-btn-on:hover { background: var(--panel-2); }
+.neon-btn-cyan { background: var(--cyan); box-shadow: 4px 4px 0 0 #0a7480; }
+.neon-btn-cyan:hover { background: #7af7ff; box-shadow: 2px 2px 0 0 #0a7480; }
+.neon-btn-sm { padding: 0.55rem 1rem; font-size: 0.8rem; }
+
+.ninja-idle {
+  transform-origin: 50% 100%;
+  animation: bob 1.2s steps(4, jump-none) infinite, glow 2.4s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) scale(1.03, 0.97); }
+  50% { transform: translateY(-8px) scale(0.98, 1.03); }
+}
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--glow)); }
+  50% { filter: drop-shadow(0 0 20px var(--glow)); }
+}
+
+/* Weapon strikes: wind-up, strike, recover, then rest. The sprite is a single image, so the whole body swings. */
+.ninja-wrap { position: relative; display: inline-block; }
+.ninja-swing { transform-origin: 50% 90%; animation: swing 4s linear infinite; animation-delay: var(--attack-delay, 0s); }
+.ninja-slam { transform-origin: 50% 90%; animation: slam 4s linear infinite; animation-delay: var(--attack-delay, 0s); }
+@keyframes swing {
+  0%, 62%, 100% { transform: none; }
+  68% { transform: translateX(-8px) rotate(-9deg); }
+  74% { transform: translateX(16px) rotate(11deg) scale(1.05); }
+  82% { transform: translateX(10px) rotate(6deg); }
+  90% { transform: translateX(-2px) rotate(-1deg); }
+}
+@keyframes slam {
+  0%, 60%, 100% { transform: none; }
+  68% { transform: translateY(-18px) rotate(-6deg); }
+  74% { transform: translateY(8px) rotate(8deg) scale(1.04, 0.96); }
+  80% { transform: translateY(0) rotate(3deg); }
+  90% { transform: rotate(0); }
+}
+
+/* Hand-generated 6-frame effect strips (public/ninjas/fx-*.png), stepped through while the ninja strikes. */
+.ninja-slash {
+  position: absolute; left: 42%; top: 6%; width: 75%; height: 75%;
+  background-size: 600% 100%; background-repeat: no-repeat; image-rendering: pixelated;
+  opacity: 0; pointer-events: none;
+  animation: fx-frames 4s step-end infinite; animation-delay: var(--attack-delay, 0s);
+}
+.ninja-slam .ninja-slash { left: 12%; top: 28%; width: 76%; height: 76%; }
+@keyframes fx-frames {
+  0%, 71.9%, 94%, 100% { opacity: 0; background-position: 0% 0; }
+  72% { opacity: 1; background-position: 0% 0; }
+  76% { opacity: 1; background-position: 20% 0; }
+  80% { opacity: 1; background-position: 40% 0; }
+  84% { opacity: 1; background-position: 60% 0; }
+  88% { opacity: 1; background-position: 80% 0; }
+  91% { opacity: 1; background-position: 100% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ninja-idle, .ninja-swing, .ninja-slam, .ninja-slash { animation: none; }
+  .neon-btn { transition: none; }
+}
+

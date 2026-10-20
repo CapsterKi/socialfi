@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../ninja-landing/components"
+		},
+		{
+			"path": "../../ninja-landing/hooks"
+		},
+		{
+			"path": "../../ninja-landing/lib"
+		}
+	],
+	"settings": {}
+}
